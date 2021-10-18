@@ -626,7 +626,7 @@
  * the issues involved, don't use bed PID until someone else verifies that your hardware works.
  */
 // Bed PID is fine on the bed's end, but I don't know if that's okay on the board's end
-//#define PIDTEMPBED
+#define PIDTEMPBED
 
 //#define BED_LIMIT_SWITCHING
 
