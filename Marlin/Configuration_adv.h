@@ -2949,9 +2949,9 @@
 
   #if EITHER(SENSORLESS_HOMING, SENSORLESS_PROBING)
     // TMC2209: 0...255. TMC2130: -64...63
-    #define X_STALL_SENSITIVITY  152
+    #define X_STALL_SENSITIVITY  80
     #define X2_STALL_SENSITIVITY X_STALL_SENSITIVITY
-    #define Y_STALL_SENSITIVITY  152
+    #define Y_STALL_SENSITIVITY  110
     #define Y2_STALL_SENSITIVITY Y_STALL_SENSITIVITY
     //#define Z_STALL_SENSITIVITY  8
     //#define Z2_STALL_SENSITIVITY Z_STALL_SENSITIVITY
@@ -3834,11 +3834,11 @@
  * Host Prompt Support enables Marlin to use the host for user prompts so
  * filament runout and other processes can be managed from the host side.
  */
-//#define HOST_ACTION_COMMANDS
+#define HOST_ACTION_COMMANDS
 #if ENABLED(HOST_ACTION_COMMANDS)
-  //#define HOST_PAUSE_M76
-  //#define HOST_PROMPT_SUPPORT
-  //#define HOST_START_MENU_ITEM  // Add a menu item that tells the host to start
+  #define HOST_PAUSE_M76
+  #define HOST_PROMPT_SUPPORT
+  #define HOST_START_MENU_ITEM  // Add a menu item that tells the host to start
 #endif
 
 /**

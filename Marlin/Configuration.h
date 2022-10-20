@@ -884,7 +884,7 @@
 
 // Enable this feature if all enabled endstop pins are interrupt-capable.
 // This will remove the need to poll the interrupt pins, saving many CPU cycles.
-#define ENDSTOP_INTERRUPTS_FEATURE
+//#define ENDSTOP_INTERRUPTS_FEATURE
 
 /**
  * Endstop Noise Threshold
@@ -1746,7 +1746,7 @@
 #endif
 
 // Homing speeds (mm/min)
-#define HOMING_FEEDRATE_MM_M { (120*60), (120*60), (4*60) }
+#define HOMING_FEEDRATE_MM_M { (80*60), (80*60), (2*60) }
 
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
@@ -2489,7 +2489,7 @@
 //
 // SSD1306 OLED full graphics generic display
 //
-//#define U8GLIB_SSD1306
+#define U8GLIB_SSD1306
 
 //
 // SAV OLEd LCD module support using either SSD1306 or SH1106 based LCD modules
