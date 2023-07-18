@@ -651,7 +651,7 @@
 #define PIDTEMP          // See the PID Tuning Guide at https://reprap.org/wiki/PID_Tuning
 //#define MPCTEMP        // ** EXPERIMENTAL **
 
-#define BANG_MAX 255     // Limits current to nozzle while in bang-bang mode; 255=full current
+#define BANG_MAX 128     // Limits current to nozzle while in bang-bang mode; 255=full current
 #define PID_MAX BANG_MAX // Limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
 #define PID_K1 0.95      // Smoothing factor within any PID loop
 
@@ -663,13 +663,13 @@
   #if ENABLED(PID_PARAMS_PER_HOTEND)
     // Specify up to one value per hotend here, according to your setup.
     // If there are fewer values, the last one applies to the remaining hotends.
-    #define DEFAULT_Kp_LIST {  22.20,  22.20 }
-    #define DEFAULT_Ki_LIST {   1.08,   1.08 }
-    #define DEFAULT_Kd_LIST { 114.00, 114.00 }
+    #define DEFAULT_Kp_LIST {   5.70,  22.20 }
+    #define DEFAULT_Ki_LIST {   0.36,   1.08 }
+    #define DEFAULT_Kd_LIST {  22.56, 114.00 }
   #else
-    #define DEFAULT_Kp  22.20
-    #define DEFAULT_Ki   1.08
-    #define DEFAULT_Kd 114.00
+    #define DEFAULT_Kp   5.70
+    #define DEFAULT_Ki   0.36
+    #define DEFAULT_Kd  22.56
   #endif
 #endif
 
@@ -752,9 +752,9 @@
 
   // 120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   // from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
-  #define DEFAULT_bedKp 10.00
-  #define DEFAULT_bedKi .023
-  #define DEFAULT_bedKd 305.4
+  #define DEFAULT_bedKp 35.44
+  #define DEFAULT_bedKi 5.99
+  #define DEFAULT_bedKd 139.87
 
   // FIND YOUR OWN: "M303 E-1 C8 S90" to run autotune on the bed at 90 degreesC for 8 cycles.
 #endif // PIDTEMPBED
@@ -1641,8 +1641,8 @@
 
 // Invert the stepper direction. Change (or reverse the motor connector) if an axis goes the wrong way.
 #define INVERT_X_DIR false
-#define INVERT_Y_DIR true
-#define INVERT_Z_DIR false
+#define INVERT_Y_DIR false
+#define INVERT_Z_DIR true
 //#define INVERT_I_DIR false
 //#define INVERT_J_DIR false
 //#define INVERT_K_DIR false
@@ -1698,8 +1698,8 @@
 #define Y_BED_SIZE 220
 
 // Travel limits (linear=mm, rotational=°) after homing, corresponding to endstop positions.
-#define X_MIN_POS 0
-#define Y_MIN_POS 0
+#define X_MIN_POS -37
+#define Y_MIN_POS -19
 #define Z_MIN_POS 0
 #define X_MAX_POS X_BED_SIZE
 #define Y_MAX_POS Y_BED_SIZE
