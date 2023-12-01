@@ -37,8 +37,11 @@
 //
 // Heaters / Fans
 //
-// Power outputs EFBF or EFBE
-#define MOSFET_D_PIN 7
+
+#define MOSFET_A_PIN                          10  // HE0
+#define MOSFET_B_PIN                           7  // HE1 or FAN Hotend Cooling
+#define MOSFET_C_PIN                           8  // HBED
+#define FAN0_PIN                               9  // FAN Part Cooling
 
 // Hotend, Hotend, Bed + Fan on D9
 #if FET_ORDER_EEB
@@ -52,11 +55,11 @@
 //
 
 #ifndef X_CS_PIN
-  #define X_CS_PIN 59
+  #define X_CS_PIN                            59
 #endif
 
 #ifndef Y_CS_PIN
-  #define Y_CS_PIN 63
+  #define Y_CS_PIN                            63
 #endif
 
 #include "pins_RAMPS.h"

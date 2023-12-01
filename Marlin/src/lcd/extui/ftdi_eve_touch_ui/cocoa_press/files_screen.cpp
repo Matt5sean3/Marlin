@@ -54,6 +54,34 @@
   #define BTN2_POS BTN_POS( 7,8), BTN_SIZE(5,1)
 #endif
 
+#if ENABLED(TOUCH_UI_PORTRAIT)
+  #define GRID_COLS  6
+  #define GRID_ROWS 15
+  #define FILES_PER_PAGE 11
+  #define PREV_DIR LEFT
+  #define NEXT_DIR RIGHT
+
+  #define PREV_POS BTN_POS(1,1),  BTN_SIZE(1,2)
+  #define HEAD_POS BTN_POS(2,1),  BTN_SIZE(4,2)
+  #define NEXT_POS BTN_POS(6,1),  BTN_SIZE(1,2)
+  #define LIST_POS BTN_POS(1,3),  BTN_SIZE(6,FILES_PER_PAGE)
+  #define BTN1_POS BTN_POS(1,14), BTN_SIZE(3,2)
+  #define BTN2_POS BTN_POS(4,14), BTN_SIZE(3,2)
+#else
+  #define GRID_COLS 12
+  #define GRID_ROWS  8
+  #define FILES_PER_PAGE 6
+  #define PREV_DIR UP
+  #define NEXT_DIR DOWN
+
+  #define PREV_POS BTN_POS(12,2), BTN_SIZE(1,3)
+  #define HEAD_POS BTN_POS( 1,1), BTN_SIZE(12,1)
+  #define NEXT_POS BTN_POS(12,5), BTN_SIZE(1,4)
+  #define LIST_POS BTN_POS( 1,2), BTN_SIZE(11,FILES_PER_PAGE)
+  #define BTN1_POS BTN_POS( 1,8), BTN_SIZE(6,1)
+  #define BTN2_POS BTN_POS( 7,8), BTN_SIZE(5,1)
+#endif
+
 using namespace FTDI;
 using namespace ExtUI;
 using namespace Theme;
@@ -77,7 +105,7 @@ const char *FilesScreen::getSelectedFilename(bool shortName) {
 }
 
 void FilesScreen::drawSelectedFile() {
-  if(mydata.selected_tag == 0xFF) return;
+  if (mydata.selected_tag == 0xFF) return;
   FileList files;
   files.seek(getSelectedFileIndex(), true);
   mydata.flags.is_dir = files.isDir();
@@ -111,16 +139,28 @@ void FilesScreen::drawFileButton(int x, int y, int w, int h, const char *filenam
   cmd.cmd(COLOR_RGB(is_highlighted ? fg_action : bg_color));
   cmd.font(font_medium).rectangle(bx, by, bw, bh);
   cmd.cmd(COLOR_RGB(is_highlighted ? normal_btn.rgb : bg_text_enabled));
+<<<<<<<< HEAD:Marlin/src/lcd/extui/ftdi_eve_touch_ui/generic/files_screen.cpp
+  if (TERN0(SCROLL_LONG_FILENAMES, is_highlighted)) {
+    #if ENABLED(SCROLL_LONG_FILENAMES)
+========
   #if ENABLED(SCROLL_LONG_FILENAMES)
     if (is_highlighted) {
+>>>>>>>> bugfix-2.1.x:Marlin/src/lcd/extui/ftdi_eve_touch_ui/cocoa_press/files_screen.cpp
       cmd.cmd(SAVE_CONTEXT());
       cmd.cmd(SCISSOR_XY(x,y));
       cmd.cmd(SCISSOR_SIZE(w,h));
       cmd.cmd(MACRO(0));
       cmd.text(bx, by, bw, bh, filename, OPT_CENTERY | OPT_NOFIT);
+<<<<<<<< HEAD:Marlin/src/lcd/extui/ftdi_eve_touch_ui/generic/files_screen.cpp
+    #endif
+  }
+  else
+    draw_text_with_ellipsis(cmd, bx,by, bw - (is_dir ? 20 : 0), bh, filename, OPT_CENTERY, font_medium);
+========
     } else
   #endif
   draw_text_with_ellipsis(cmd, bx,by, bw - (is_dir ? 20 : 0), bh, filename, OPT_CENTERY, font_medium);
+>>>>>>>> bugfix-2.1.x:Marlin/src/lcd/extui/ftdi_eve_touch_ui/cocoa_press/files_screen.cpp
   if (is_dir && !is_highlighted) cmd.text(bx, by, bw, bh, F("> "),  OPT_CENTERY | OPT_RIGHTX);
   #if ENABLED(SCROLL_LONG_FILENAMES)
     if (is_highlighted) cmd.cmd(RESTORE_CONTEXT());
@@ -136,11 +176,17 @@ void FilesScreen::drawFileList() {
 
   uint16_t fileIndex = mydata.cur_page * FILES_PER_PAGE;
   for (uint8_t i = 0; i < FILES_PER_PAGE; i++, fileIndex++) {
+<<<<<<<< HEAD:Marlin/src/lcd/extui/ftdi_eve_touch_ui/generic/files_screen.cpp
+    if (!files.seek(fileIndex)) break;
+    drawFileButton(files.filename(), getTagForLine(i), files.isDir(), false);
+    mydata.flags.is_empty = false;
+========
     if (files.seek(fileIndex)) {
       drawFileButton(files.filename(), getTagForLine(i), files.isDir(), false);
       mydata.flags.is_empty = false;
     } else
       break;
+>>>>>>>> bugfix-2.1.x:Marlin/src/lcd/extui/ftdi_eve_touch_ui/cocoa_press/files_screen.cpp
   }
 }
 
@@ -170,17 +216,31 @@ void FilesScreen::drawFooter() {
   CommandProcessor cmd;
   cmd.colors(normal_btn)
      .font(font_medium)
+<<<<<<<< HEAD:Marlin/src/lcd/extui/ftdi_eve_touch_ui/generic/files_screen.cpp
+     .colors(has_selection ? normal_btn : action_btn);
+
+  if (mydata.flags.is_root)
+    cmd.tag(240).button(BTN2_POS, GET_TEXT_F(MSG_BUTTON_DONE));
+  else
+    cmd.tag(245).button(BTN2_POS, F("Up Dir"));
+
+  cmd.enabled(has_selection)
+     .colors(has_selection ? action_btn : normal_btn);
+
+  if (mydata.flags.is_dir)
+    cmd.tag(244).button(BTN1_POS, GET_TEXT_F(MSG_BUTTON_OPEN));
+  else
+    cmd.tag(241).button(BTN1_POS, GET_TEXT_F(MSG_BUTTON_PRINT));
+========
      .colors(normal_btn)
-     .enabled(!mydata.flags.is_root)
-     .tag(245).button(BTN2_POS, F("Up Dir"))
+     .tag(mydata.flags.is_root ? 240 : 245).button(BTN2_POS, F("Back"))
      .colors(action_btn);
 
-  if (mydata.flags.is_empty)
-    cmd.tag(240).button(BTN1_POS, GET_TEXT_F(MSG_BUTTON_DONE));
-  else if (has_selection && mydata.flags.is_dir)
+  if (has_selection && mydata.flags.is_dir)
     cmd.tag(244).button(BTN1_POS, GET_TEXT_F(MSG_BUTTON_OPEN));
   else
     cmd.tag(241).enabled(has_selection).button(BTN1_POS, F("Select"));
+>>>>>>>> bugfix-2.1.x:Marlin/src/lcd/extui/ftdi_eve_touch_ui/cocoa_press/files_screen.cpp
 }
 
 void FilesScreen::drawFileButton(const char *filename, uint8_t tag, bool is_dir, bool is_highlighted) {
@@ -214,15 +274,20 @@ void FilesScreen::gotoPage(uint8_t page) {
 
 bool FilesScreen::onTouchEnd(uint8_t tag) {
   switch (tag) {
-    case 240: // Done button, always select first file
-      {
-          FileList files;
-          files.seek(0);
-          GOTO_PREVIOUS();
-      }
+<<<<<<<< HEAD:Marlin/src/lcd/extui/ftdi_eve_touch_ui/generic/files_screen.cpp
+    case 240: // Done button
+      GOTO_PREVIOUS();
+      return true;
+    case 241: // Print highlighted file
+      ConfirmStartPrintDialogBox::show(getSelectedFileIndex());
+========
+    case 240: // Back button
+      card.filename[0] = card.longFilename[0] = '\0'; // Clear file selection
+      GOTO_PREVIOUS();
       return true;
     case 241: // Select highlighted file
       GOTO_PREVIOUS();
+>>>>>>>> bugfix-2.1.x:Marlin/src/lcd/extui/ftdi_eve_touch_ui/cocoa_press/files_screen.cpp
       return true;
     case 242: // Previous page
       if (mydata.cur_page > 0) {
@@ -286,4 +351,8 @@ void FilesScreen::onMediaRemoved() {
   if (AT_SCREEN(FilesScreen)) GOTO_SCREEN(StatusScreen);
 }
 
+<<<<<<<< HEAD:Marlin/src/lcd/extui/ftdi_eve_touch_ui/generic/files_screen.cpp
+#endif // FTDI_FILES_SCREEN
+========
 #endif // COCOA_FILES_SCREEN
+>>>>>>>> bugfix-2.1.x:Marlin/src/lcd/extui/ftdi_eve_touch_ui/cocoa_press/files_screen.cpp
