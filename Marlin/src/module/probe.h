@@ -47,6 +47,8 @@
 
 #if ENABLED(BD_SENSOR)
   #define PROBE_READ() bdp_state
+#elif ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
+  #define PROBE_READ() Probe::strain_gage_state
 #elif USE_Z_MIN_PROBE
   #define PROBE_READ() READ(Z_MIN_PROBE_PIN)
 #else
@@ -81,6 +83,12 @@ public:
   #if ENABLED(SENSORLESS_PROBING)
     typedef struct { bool x:1, y:1, z:1; } sense_bool_t;
     static sense_bool_t test_sensitivity;
+  #endif
+
+  #ifdef Z_PROBE_ADC_STRAIN_GAGE
+    static raw_adc_t strain_gage_value;
+    static raw_adc_t tare_value;
+    static bool strain_gage_state;
   #endif
 
   #if HAS_BED_PROBE
