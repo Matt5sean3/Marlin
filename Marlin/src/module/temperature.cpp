@@ -202,6 +202,10 @@
   #include "probe.h"
 #endif
 
+#ifdef Z_PROBE_ADC_STRAIN_GAGE
+  #include "probe.h"
+#endif
+
 #if ANY(MPCTEMP, PID_EXTRUSION_SCALING)
   #include "stepper.h"
 #endif
@@ -2991,6 +2995,7 @@ void Temperature::init() {
   TERN_(HAS_TEMP_ADC_REDUNDANT, hal.adc_enable(TEMP_REDUNDANT_PIN));
   TERN_(FILAMENT_WIDTH_SENSOR,  hal.adc_enable(FILWIDTH_PIN));
   TERN_(HAS_ADC_BUTTONS,        hal.adc_enable(ADC_KEYPAD_PIN));
+  TERN_(Z_PROBE_ADC_STRAIN_GAGE,hal.adc_enable(Z_MIN_PROBE_PIN));
   TERN_(POWER_MONITOR_CURRENT,  hal.adc_enable(POWER_MONITOR_CURRENT_PIN));
   TERN_(POWER_MONITOR_VOLTAGE,  hal.adc_enable(POWER_MONITOR_VOLTAGE_PIN));
 
@@ -4345,6 +4350,29 @@ void Temperature::isr() {
         if (ADCKey_count == ADC_BUTTON_DEBOUNCE_DELAY) ADCKey_pressed = true;
         break;
     #endif // HAS_ADC_BUTTONS
+
+    #ifdef Z_PROBE_ADC_STRAIN_GAGE
+      case Prepare_StrainGage:
+        if(Endstops::z_probe_enabled) {
+          hal.adc_start(Z_MIN_PROBE_PIN); break;
+        } else {
+          next_sensor_state = (ADCSensorState)(int(Measure_StrainGage) + 1);
+        }
+      case Measure_StrainGage:
+        // Check if actively looking for strain values
+        if(!hal.adc_ready()) {
+          next_sensor_state = adc_sensor_state;
+          break;
+        } else {
+          Probe::strain_gage_value = hal.adc_value();
+
+          // WRITE(PROBE_ENABLE_PIN, 0);
+          // Compare samples logarithmically 
+          // Near values are most relevant
+          Probe::strain_gage_state = 0;
+        }
+        break;
+    #endif // Z_PROBE_ADC_STRAIN_GAGE
 
     case StartupDelay: break;
 
