@@ -1398,7 +1398,7 @@
  * The probe replaces the Z-MIN endstop and is used for Z homing.
  * (Automatically enables USE_PROBE_FOR_Z_HOMING.)
  */
-#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN
+//#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN
 
 // Force the use of the probe for Z-axis homing
 //#define USE_PROBE_FOR_Z_HOMING
@@ -1595,6 +1595,27 @@
 #endif // Z_PROBE_ALLEN_KEY
 
 /**
+ * ADC Strain Gage Z-probe
+ *
+ * Uses an onboard ADC pin to read a signal influenced by a strain gage measured
+ * by a DC amplifier circuit.
+ *
+ * Experimental: Currently in development for BTT SKR Mini E3 V3.0
+ * Requires Z_MIN_PROBE_PIN to be an ADC pin.
+ *
+ * This uses a very experimental procedure to try to learn the characteristic signal
+ * when the nozzle hits the bed.
+ */
+#define Z_PROBE_ADC_STRAIN_GAGE
+#ifdef Z_PROBE_ADC_STRAIN_GAGE
+  #define Z_PROBE_ADC_THRESHOLD   100 // Number in a 12-bit ADC by which the read value changes to indicate a trigger  
+                                       // This is about 0.8 mV per number
+                                       // Starting with ~50 mV to trigger
+  #define Z_PROBE_ADC_HISTORY     250 // Number of 12-bit samples to retain from the ADC
+                                      // Used in process of 
+#endif
+
+/**
  * Nozzle-to-Probe offsets { X, Y, Z }
  *
  * X and Y offset
@@ -1672,7 +1693,7 @@
  * Useful for a strain gauge or piezo sensor that needs to factor out
  * elements such as cables pulling on the carriage.
  */
-//#define PROBE_TARE
+#define PROBE_TARE
 #if ENABLED(PROBE_TARE)
   #define PROBE_TARE_TIME  200    // (ms) Time to hold tare pin
   #define PROBE_TARE_DELAY 200    // (ms) Delay after tare before
@@ -1688,7 +1709,7 @@
  * Probe Enable / Disable
  * The probe only provides a triggered signal when enabled.
  */
-//#define PROBE_ENABLE_DISABLE
+#define PROBE_ENABLE_DISABLE
 #if ENABLED(PROBE_ENABLE_DISABLE)
   //#define PROBE_ENABLE_PIN -1   // Override the default pin here
 #endif
@@ -2100,9 +2121,9 @@
  */
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
-//#define AUTO_BED_LEVELING_BILINEAR
+#define AUTO_BED_LEVELING_BILINEAR
 //#define AUTO_BED_LEVELING_UBL
-#define MESH_BED_LEVELING
+//#define MESH_BED_LEVELING
 
 /**
  * Commands to execute at the end of G29 probing.

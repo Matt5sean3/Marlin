@@ -46,10 +46,32 @@
   #define MARLIN_EEPROM_SIZE              0x1000  // 4K
 #endif
 
-//
-// Servos
-//
-#define SERVO0_PIN                          PA1   // SERVOS
+#ifdef Z_PROBE_ADC_STRAIN_GAGE
+
+  // Strain gage uses pins in a radically different way
+  #define Z_MIN_PROBE_PIN                    PA1  // labeled SERVO on BL Touch connector
+  #if ENABLED(PROBE_ENABLE_DISABLE) && !defined(PROBE_ENABLE_PIN)
+    #define PROBE_ENABLE_PIN                PC14 // Enables strain gage, should be active only for short times to limit heat
+                                                 // Also uses PWR pin from Z-probe, either 5V or 3.3V
+  #endif
+#else
+  //
+  // Servos
+  //
+  #define SERVO0_PIN                          PA1   // SERVOS
+                                                    //
+  //
+  // Probe enable
+  //
+  #if ENABLED(PROBE_ENABLE_DISABLE) && !defined(PROBE_ENABLE_PIN)
+    #define PROBE_ENABLE_PIN            SERVO0_PIN
+  #endif
+
+  //
+  // Z Probe must be this pin
+  //
+  #define Z_MIN_PROBE_PIN                     PC14  // PROBE
+#endif
 
 //
 // Limit Switches
@@ -58,17 +80,6 @@
 #define Y_STOP_PIN                          PC1   // Y-STOP
 #define Z_STOP_PIN                          PC2   // Z-STOP
 
-//
-// Z Probe must be this pin
-//
-#define Z_MIN_PROBE_PIN                     PC14  // PROBE
-
-//
-// Probe enable
-//
-#if ENABLED(PROBE_ENABLE_DISABLE) && !defined(PROBE_ENABLE_PIN)
-  #define PROBE_ENABLE_PIN            SERVO0_PIN
-#endif
 
 //
 // Filament Runout Sensor
