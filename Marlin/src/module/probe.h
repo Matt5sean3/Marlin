@@ -48,7 +48,7 @@
 #if ENABLED(BD_SENSOR)
   #define PROBE_READ() bdp_state
 #elif ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
-  #define PROBE_READ() Probe::strain_gage_state
+  #define PROBE_READ() Probe::strain_gage_state()
 #elif USE_Z_MIN_PROBE
   #define PROBE_READ() READ(Z_MIN_PROBE_PIN)
 #else
@@ -87,8 +87,11 @@ public:
 
   #ifdef Z_PROBE_ADC_STRAIN_GAGE
     static raw_adc_t strain_gage_value;
-    static raw_adc_t tare_value;
-    static bool strain_gage_state;
+    static raw_adc_t strain_gage_reference;
+    static inline bool strain_gage_state() {
+      return abs(strain_gage_value - strain_gage_reference) > Z_PROBE_ADC_THRESHOLD;
+    }
+    
   #endif
 
   #if HAS_BED_PROBE
