@@ -74,6 +74,8 @@ Endstops::endstop_mask_t Endstops::live_state = 0;
   #else
     #define READ_ENDSTOP(P) READ(P)
   #endif
+#elif ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
+  #define READ_ENDSTOP(P) (P == Z_MIN_PROBE_PIN ? Probe::strain_gage_state() : READ(P))
 #else
   #define READ_ENDSTOP(P) READ(P)
 #endif
