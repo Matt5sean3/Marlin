@@ -4456,6 +4456,21 @@ static_assert(WITHIN(MULTISTEPPING_LIMIT, 1, 128) && IS_POWER_OF_2(MULTISTEPPING
   #error "Only enable ULTIPANEL_FEEDMULTIPLY or ULTIPANEL_FLOWPERCENT, but not both."
 #endif
 
+#if ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
+  #if !HAS_BED_PROBE
+    #error "Must have bed probe with ADC strain gage"
+  #endif
+  #if !Z_HOME_TO_MIN
+    #error "Must be homing to min to use Z-probe ADC strain gage"
+  #endif
+  #if !ENABLED(USE_PROBE_FOR_Z_HOMING)
+    #error "Must use probe for Z homing with Z-probe ADC strain gage"
+  #endif
+  #if !HOMING_Z_WITH_PROBE
+    #error "Must be homing Z with Probe to use Z-probe ADC Strain Gage"
+  #endif
+#endif
+
 // Misc. Cleanup
 #undef _TEST_PWM
 #undef _NUM_AXES_STR

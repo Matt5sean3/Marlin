@@ -1401,7 +1401,7 @@
 //#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN
 
 // Force the use of the probe for Z-axis homing
-//#define USE_PROBE_FOR_Z_HOMING
+#define USE_PROBE_FOR_Z_HOMING
 
 /**
  * Z_MIN_PROBE_PIN
@@ -1608,11 +1608,10 @@
  */
 #define Z_PROBE_ADC_STRAIN_GAGE
 #ifdef Z_PROBE_ADC_STRAIN_GAGE
-  #define Z_PROBE_ADC_THRESHOLD   100 // Number in a 12-bit ADC by which the read value changes to indicate a trigger  
+  #define Z_PROBE_ADC_THRESHOLD   200 // Number in a 12-bit ADC by which the read value changes to indicate a trigger  
                                        // This is about 0.8 mV per number
                                        // Starting with ~50 mV to trigger
-  #define Z_PROBE_ADC_HISTORY     250 // Number of 12-bit samples to retain from the ADC
-                                      // Used in process of 
+  #define Z_PROBE_ADC_STRAIN_GAGE_FAST// Set if your microcontroller ADC can just do analog read without charging time
 #endif
 
 /**
@@ -1873,7 +1872,7 @@
 // :[-1,1]
 #define X_HOME_DIR 1
 #define Y_HOME_DIR 1
-#define Z_HOME_DIR 1
+#define Z_HOME_DIR -1
 //#define I_HOME_DIR -1
 //#define J_HOME_DIR -1
 //#define K_HOME_DIR -1
@@ -2351,7 +2350,7 @@
  * - Allows Z homing only when XY positions are known and trusted.
  * - If stepper drivers sleep, XY homing may be required again before Z homing.
  */
-//#define Z_SAFE_HOMING
+#define Z_SAFE_HOMING
 
 #if ENABLED(Z_SAFE_HOMING)
   #define Z_SAFE_HOMING_X_POINT X_CENTER  // (mm) X point for Z homing

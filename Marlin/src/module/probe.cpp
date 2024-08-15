@@ -699,8 +699,7 @@ bool Probe::probe_down_to_z(const_float_t z, const_feedRate_t fr_mm_s) {
 
 #ifdef Z_PROBE_ADC_STRAIN_GAGE
   raw_adc_t Probe::strain_gage_value;
-  raw_adc_t Probe::tare_value;
-  bool Probe::strain_gage_state;
+  raw_adc_t Probe::strain_gage_reference;
 #endif
 
 #if ENABLED(PROBE_TARE)
@@ -710,7 +709,7 @@ bool Probe::probe_down_to_z(const_float_t z, const_feedRate_t fr_mm_s) {
    * @details Init tare pin to ON state for a strain gauge, otherwise OFF
    */
   void Probe::tare_init() {
-    #ifndef Z_PROBE_ADC_STRAIN_GAGE
+    #if !ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
       OUT_WRITE(PROBE_TARE_PIN, !PROBE_TARE_STATE);
     #endif
   }
@@ -732,7 +731,10 @@ bool Probe::probe_down_to_z(const_float_t z, const_feedRate_t fr_mm_s) {
 
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Taring probe");
     #ifdef Z_PROBE_ADC_STRAIN_GAGE
-      tare_value = strain_gage_value;
+      deploy();
+      delay(PROBE_TARE_TIME);
+      strain_gage_reference = strain_gage_value;
+      stow();
     #else
       WRITE(PROBE_TARE_PIN, PROBE_TARE_STATE);
       delay(PROBE_TARE_TIME);
