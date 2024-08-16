@@ -4186,12 +4186,14 @@ void Temperature::isr() {
 
   #ifdef Z_PROBE_ADC_STRAIN_GAGE
     #if ENABLED(Z_PROBE_ADC_STRAIN_GAGE_FAST)
-      // On platforms with a quick ADC, just catch the full 1kHz
-      hal.adc_start(Z_MIN_PROBE_PIN);
-      Probe::strain_gage_value = hal.adc_value();
-      static int counter = 0;
-      if(counter % 500 == 0) {
-        SERIAL_ECHOPGM("Strain Gage Value: ", Probe::strain_gage_value);
+      if(Endstops::z_probe_enabled) {
+        // On platforms with a quick ADC, just catch the full 1kHz
+        hal.adc_start(Z_MIN_PROBE_PIN);
+        Probe::strain_gage_value = hal.adc_value();
+        static int counter = 0;
+        if(counter % 500 == 0) {
+          SERIAL_ECHOPGM("Strain Gage Value: ", Probe::strain_gage_value);
+        }
       }
     #else
     // Use a separate switch to allow
