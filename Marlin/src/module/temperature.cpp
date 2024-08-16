@@ -4184,7 +4184,7 @@ void Temperature::isr() {
     (ADCSensorState)(int(adc_sensor_state) + 1) :
     StartSampling;
 
-  #ifdef Z_PROBE_ADC_STRAIN_GAGE
+  #if ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
     #if ENABLED(Z_PROBE_ADC_STRAIN_GAGE_FAST)
       if(Endstops::z_probe_enabled) {
         // On platforms with a quick ADC, just catch the full 1kHz
@@ -4196,6 +4196,7 @@ void Temperature::isr() {
         }
       }
     #else
+      #error "Not presently supported"
     // Use a separate switch to allow
     // Allows sampling the Z-probe closer to 250Hz
     // This hack steals half the cycles from the other ADCs when probing
