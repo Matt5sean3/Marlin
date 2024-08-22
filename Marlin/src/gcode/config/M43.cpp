@@ -46,6 +46,10 @@
   #include "../../lcd/extui/ui_api.h"
 #endif
 
+#if ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
+  #include "../../module/probe.h"
+#endif
+
 #if HAS_RESUME_CONTINUE
   #include "../../lcd/marlinui.h"
 #endif
@@ -295,6 +299,16 @@ void GcodeSuite::M43() {
     SERIAL_ECHOLN(F("endstop monitor "), endstops.monitor_flag ? F("en") : F("dis"), F("abled"));
     return;
   }
+
+  #if ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
+    if (parser.seen('G')) {
+      Endstops::enable_z_probe(true);
+      delay(100);
+      SERIAL_ECHOLN("Strain gage value: ", Probe::strain_gage_value);
+      Endstops::enable_z_probe(false);
+      return;
+    }
+  #endif
 
   // 'S' Run servo probe test and return
   if (parser.seen('S')) return servo_probe_test();
