@@ -697,8 +697,8 @@ bool Probe::probe_down_to_z(const_float_t z, const_feedRate_t fr_mm_s) {
   return !probe_triggered;
 }
 
-#ifdef Z_PROBE_ADC_STRAIN_GAGE
-  raw_adc_t Probe::strain_gage_value;
+#if ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
+  volatile raw_adc_t Probe::strain_gage_value;
   raw_adc_t Probe::strain_gage_reference;
 #endif
 
@@ -730,11 +730,12 @@ bool Probe::probe_down_to_z(const_float_t z, const_feedRate_t fr_mm_s) {
     #endif
 
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Taring probe");
-    #ifdef Z_PROBE_ADC_STRAIN_GAGE
-      deploy();
+    #if ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
+      //deploy();
       delay(PROBE_TARE_TIME);
       strain_gage_reference = strain_gage_value;
-      stow();
+      SERIAL_ECHOPGM("Strain Gage Reference: ", Probe::strain_gage_reference);
+      //stow();
     #else
       WRITE(PROBE_TARE_PIN, PROBE_TARE_STATE);
       delay(PROBE_TARE_TIME);

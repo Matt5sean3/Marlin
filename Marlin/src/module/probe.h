@@ -36,6 +36,10 @@
 #define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)
 #include "../core/debug_out.h"
 
+#if ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
+  #include "endstops.h"
+#endif
+
 #if HAS_BED_PROBE
   enum ProbePtRaise : uint8_t {
     PROBE_PT_NONE,      // No raise or stow after run_z_probe
@@ -86,10 +90,10 @@ public:
   #endif
 
   #ifdef Z_PROBE_ADC_STRAIN_GAGE
-    static raw_adc_t strain_gage_value;
+    static volatile raw_adc_t strain_gage_value;
     static raw_adc_t strain_gage_reference;
     static inline bool strain_gage_state() {
-      return abs(strain_gage_value - strain_gage_reference) > Z_PROBE_ADC_THRESHOLD;
+      return (Endstops::z_probe_enabled && abs(strain_gage_value - strain_gage_reference) > Z_PROBE_ADC_THRESHOLD);
     }
     
   #endif

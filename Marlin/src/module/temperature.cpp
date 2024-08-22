@@ -3880,13 +3880,6 @@ public:
   #endif
 };
 
-#if ENABLED(Z_PROBE_ADC_STRAIN_GAGE) && !ENABLED(Z_PROBE_ADC_STRAIN_GAGE_FAST)
-  enum FastADCSensorState : char {
-    Prepare_StrainGage, Measure_StrainGage,
-    FastPass1, FastPass2
-  };
-#endif
-
 /**
  * Handle various ~1kHz tasks associated with temperature
  *  - Check laser safety timeout
@@ -4240,51 +4233,14 @@ void Temperature::isr() {
     StartSampling;
 
   #if ENABLED(Z_PROBE_ADC_STRAIN_GAGE)
-    #if ENABLED(Z_PROBE_ADC_STRAIN_GAGE_FAST)
-      if(Endstops::z_probe_enabled) {
-        // On platforms with a quick ADC, just catch the full 1kHz
-        hal.adc_start(Z_MIN_PROBE_PIN);
-        Probe::strain_gage_value = hal.adc_value();
-        static int counter = 0;
-        if(counter % 500 == 0) {
-          SERIAL_ECHOPGM("Strain Gage Value: ", Probe::strain_gage_value);
-        }
-      }
-    #else
-      #error "Not presently supported"
     // Use a separate switch to allow
     // Allows sampling the Z-probe closer to 250Hz
     // This hack steals half the cycles from the other ADCs when probing
-    if(Endstops::z_probe_enabled && int(adc_sensor_state) % 2 == int(StartSampling) + 1) {
-      // When probing, halves frequency of other ADC measurements
-      static FastADCSensorState fast_adc_sensor_state = Prepare_StrainGage;
-      switch(fast_adc_sensor_state) {
-        case Prepare_StrainGage:
-          hal.adc_start(Z_MIN_PROBE_PIN); break;
-          next_adc_sensor_state = adc_sensor_state;
-          adc_sensor_state = StartupDelay; // skip other ADC operations
-        case Measure_StrainGage:
-          // Check if actively looking for strain values
-          if(!hal.adc_ready()) {
-            fast_adc_sensor_state = Prepare_StrainGage;
-            adc_sensor_state = StartupDelay; // skip other ADC operations
-            break;
-          } else {
-            Probe::strain_gage_value = hal.adc_value();
-            // Compare samples logarithmically 
-            // Near values are most relevant
-            Probe::strain_gage_state =
-              abs(Probe::strain_gage_value - Probe::strain_gage_reference) > 200;
-          }
-          next_adc_sensor_state = adc_sensor_state;
-          adc_sensor_state = StartupDelay; // Skip other ADC operations
-          break;
-      }
-      fast_adc_sensor_state = fast_adc_sensor_state < FastPass1 ?
-        (FastADCSensorState)(int(fast_adc_sensor_state) + 1) :
-        Prepare_StrainGage;
+    if(Endstops::z_probe_enabled && adc_sensor_state == SensorsReady || int(adc_sensor_state) % 2 == 1) {
+      // Can quickly read the value, but shouldn't interrupt
+      hal.adc_start(Z_MIN_PROBE_PIN);
+      Probe::strain_gage_value = hal.adc_value();
     }
-    #endif // Z_PROBE_ADC_STRAIN_GAGE_FAST
   #endif // Z_PROBE_ADC_STRAIN_GAGE
 
   switch (adc_sensor_state) {
