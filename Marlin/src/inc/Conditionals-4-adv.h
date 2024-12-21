@@ -1388,6 +1388,10 @@
   #define HAS_MEATPACK 1
 #endif
 
+#if ANY(FEC_ON_SERIAL_PORT_1, FEC_ON_SERIAL_PORT_2)
+  #define HAS_FECSERIAL 1
+#endif
+
 // AVR are (usually) too limited in resources to store the configuration into the binary
 #if ENABLED(CONFIGURATION_EMBEDDING) && !defined(FORCE_CONFIG_EMBED) && (defined(__AVR__) || !HAS_MEDIA || ANY(SDCARD_READONLY, DISABLE_M503))
   #undef CONFIGURATION_EMBEDDING

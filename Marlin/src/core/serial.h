@@ -28,6 +28,10 @@
   #include "../feature/meatpack.h"
 #endif
 
+#if HAS_FECSERIAL
+  #include "../feature/fecserial.h"
+#endif
+
 //
 // Debugging flags for use by M111
 //
@@ -61,6 +65,11 @@ extern uint8_t marlin_debug_flags;
   typedef MeatpackSerial<decltype(_SERIAL_LEAF_1)> SerialLeafT1;
   extern SerialLeafT1 mpSerial1;
   #define SERIAL_LEAF_1 mpSerial1
+#elif ENABLED(FEC_ON_SERIAL_PORT_1)
+  // Hook FEC if it's enabled on the first leaf
+  typedef FecSerial<decltype(_SERIAL_LEAF_1), 1> SerialLeafT1;
+  extern SerialLeafT1 fecSerial1;
+  #define SERIAL_LEAF_1 fecSerial1
 #else
   #define SERIAL_LEAF_1 _SERIAL_LEAF_1
 #endif

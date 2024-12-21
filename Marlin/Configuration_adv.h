@@ -3972,6 +3972,14 @@
 //#define REPETIER_GCODE_M360     // Add commands originally from Repetier FW
 
 /**
+ * Support for forward error correction (FEC) via Reed-Solomon
+ */
+#define FEC_ON_SERIAL_PORT_1
+//#define FEC_ON_SERIAL_PORT_2
+// TODO combining MEATPACK with FEC would be a smart combination. The compression
+// from MEATPACK could then be used to provide stability rather than send speed.
+
+/**
  * Enable M111 debug flags 1=ECHO, 2=INFO, 4=ERRORS (unimplemented).
  * Disable to save some flash. Some hosts (Repetier Host) may rely on this feature.
  */
