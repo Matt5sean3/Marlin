@@ -1611,7 +1611,13 @@
   #define Z_PROBE_ADC_THRESHOLD   200 // Number in a 12-bit ADC by which the read value changes to indicate a trigger  
                                        // This is about 0.8 mV per number
                                        // Starting with ~50 mV to trigger
-  #define Z_PROBE_ADC_STRAIN_GAGE_FAST// Set if your microcontroller ADC can just do analog read without charging time
+  #define Z_PROBE_ADC_STRAIN_GAGE_FAST // Set if your microcontroller ADC can just do analog read without charging time
+
+  #define Z_PROBE_ADC_STRAIN_GAGE_NUMBER 2 // On microcontrollers with multiple ADCs, which ADC to use
+  // Note: read the datasheet, the ADC you plan to use must have a channel available on the pin you plan to use
+  #define Z_PROBE_ADC_STRAIN_GAGE_INTERRUPT // strain gage ADC triggers an interrupt instead of polling
+  // Note: this is preferable because polling for homing is a bit of a hack, but this requires
+  // features not present on every microcontroller, such as multiple ADCs and interrupts on ADC
 #endif
 
 /**

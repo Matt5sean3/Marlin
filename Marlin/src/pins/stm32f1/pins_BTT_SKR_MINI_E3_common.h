@@ -38,10 +38,25 @@
   #define MARLIN_EEPROM_SIZE    EEPROM_PAGE_SIZE  // 2K
 #endif
 
-//
-// Servos
-//
-#define SERVO0_PIN                          PA1   // SERVOS
+#ifdef Z_PROBE_ADC_STRAIN_GAGE
+
+  // Strain gage uses pins in a somewhat different way
+  #define Z_MIN_PROBE_PIN                    PA1  // labeled SERVO, used for its ADC channel
+  #if ENABLED(PROBE_ENABLE_DISABLE) && !defined(PROBE_ENABLE_PIN)
+    #define PROBE_ENABLE_PIN                PC14 // Enables strain gage, should be active only for short times to limit heat
+                                                 // Also uses PWR pin from SERVO connector
+  #endif
+#else
+  //
+  // Servos
+  //
+  #define SERVO0_PIN                          PA1   // SERVOS
+
+  //
+  // Z Probe must be this pin
+  //
+  #define Z_MIN_PROBE_PIN                     PC14  // PROBE
+#endif
 
 //
 // Limit Switches
@@ -49,11 +64,6 @@
 #define X_STOP_PIN                          PC0   // X-STOP
 #define Y_STOP_PIN                          PC1   // Y-STOP
 #define Z_STOP_PIN                          PC2   // Z-STOP
-
-//
-// Z Probe must be this pin
-//
-#define Z_MIN_PROBE_PIN                     PC14  // PROBE
 
 //
 // Probe enable
